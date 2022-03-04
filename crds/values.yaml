@@ -1,0 +1,20 @@
+# Default values for <sample>.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+
+metadata:
+  namespace: dev
+
+AzureIdentity:
+  enabled: true
+  name: azureidentity
+  spec:
+    resourceID: /subscriptions/<sample>/resourcegroups/<sample>pgrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/secretidentity
+    clientID: "<sample>"
+    type: 0
+  AzureIdentityBinding:
+    enabled: true
+    name: "<sample><sample>"
+    selector: azure-pod-identity-binding-selector
+

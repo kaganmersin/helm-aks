@@ -1,0 +1,25 @@
+---
+# Source: <sample>/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: <sample>
+  labels:
+    helm.sh/chart: <sample>-0.1.0
+    app.kubernetes.io/instance: <sample>
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+  rules:
+    - host: "dev-<sample>.<sample>.<sample>.aksapp.io"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: <sample>
+                port:
+                  number: 8080

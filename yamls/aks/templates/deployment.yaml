@@ -1,0 +1,76 @@
+---
+# Source: <sample>/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: <sample>
+  labels:
+    helm.sh/chart: <sample>-0.1.0
+    app.kubernetes.io/instance: <sample>
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: <sample> 
+  strategy:	
+   rollingUpdate:	
+      maxSurge: 25%
+      maxUnavailable:	25%       
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: <sample>
+        aadpodidbinding: azure-pod-identity-binding-selector 
+    spec:
+      initContainers:
+        - name: initcontainer
+          image: busybox
+          volumeMounts:
+          - mountPath: /config
+            name: config
+            readOnly: false
+          - mountPath: /secret
+            name: secrets-store-inline
+            readOnly: false
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - >-
+                cp -rfp /secret/* /config/ &&
+                mv /config/* /config/application.properties
+      containers:        
+        - name: <sample>
+          image: "<sample>acr.azurecr.io/<sample>:dev-0.2.3-<sample>"
+          imagePullPolicy: Always
+          env:
+          - name: key1
+            value: value1
+          - name: key2
+            value: value2
+          volumeMounts:
+          - mountPath: /config
+            name: config
+            readOnly: false
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          startupProbe:
+            failureThreshold: 12
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+      volumes:
+          - emptyDir:
+              medium: Memory
+            name: config
+          - csi:
+              driver: secrets-store.csi.k8s.io
+              readOnly: true
+              volumeAttributes:
+                secretProviderClass: <sample>
+            name: secrets-store-inline

@@ -1,0 +1,13 @@
+{{- if .Values.AzureIdentity.enabled }}
+apiVersion: aadpodidentity.k8s.io/v1
+kind: AzureIdentityBinding
+metadata:
+  name: {{ .Values.AzureIdentity.AzureIdentityBinding.name }}
+  namespace: {{ .Values.metadata.namespace }}
+  labels:
+    {{- include "<sample>.crdLabels" . | nindent 4 }}
+spec:
+    azureIdentity: {{ .Values.AzureIdentity.name | quote  }}      
+    selector: {{ .Values.AzureIdentity.AzureIdentityBinding.selector }}
+{{- end }}
+

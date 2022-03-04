@@ -1,0 +1,19 @@
+---
+# Source: <sample>/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: <sample>
+  labels:
+    helm.sh/chart: <sample>-0.1.0
+    app.kubernetes.io/instance: <sample>
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app.kubernetes.io/instance: <sample>

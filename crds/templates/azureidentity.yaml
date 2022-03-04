@@ -1,0 +1,11 @@
+{{- if .Values.AzureIdentity.enabled }}
+apiVersion: aadpodidentity.k8s.io/v1
+kind: AzureIdentity
+metadata:
+  name: {{ .Values.AzureIdentity.name }}
+  namespace: {{ .Values.metadata.namespace }}
+  labels:
+    {{- include "<sample>.crdLabels" . | nindent 4 }}                  
+spec:
+  {{- toYaml .Values.AzureIdentity.spec | nindent 3 }}
+{{- end }}
